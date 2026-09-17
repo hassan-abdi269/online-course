@@ -1,34 +1,22 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet } from 'react-router-dom';
 
 function getSavedUser() {
-  const savedUser = localStorage.getItem("user");
-
+  const savedUser = localStorage.getItem('user');
   if (!savedUser) return null;
-
   try {
     return JSON.parse(savedUser);
   } catch {
-    localStorage.removeItem("user");
+    localStorage.removeItem('user');
     return null;
   }
 }
 
 function ProtectedRoutes({ allowedRole }) {
   const user = getSavedUser();
-
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
+  if (!user) return <Navigate to="/login" replace />;
   if (allowedRole && user.role !== allowedRole) {
-    return (
-      <Navigate
-        to={user.role === "admin" ? "/admin/dashboard" : "/student/dashboard"}
-        replace
-      />
-    );
+    return <Navigate to={user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard'} replace />;
   }
-
   return <Outlet />;
 }
 

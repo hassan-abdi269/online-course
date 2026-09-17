@@ -1,62 +1,49 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from 'react-router-dom';
 
 const studentLinks = [
-  { label: "Dashboard", path: "/student/dashboard", icon: "▦" },
-  { label: "My Courses", path: "/student/courses", icon: "▣" },
-  { label: "Progress", path: "/student/progress", icon: "◔" },
-  { label: "Certificates", path: "/student/certificates", icon: "▤" },
-  { label: "Profile", path: "/student/profile", icon: "◉" },
+  { label: 'Dashboard', path: '/student/dashboard', icon: '▦' },
+  { label: 'My Courses', path: '/student/courses', icon: '▣' },
+  { label: 'Progress', path: '/student/progress', icon: '◔' },
+  { label: 'Certificates', path: '/student/certificates', icon: '▤' },
+  { label: 'Profile', path: '/student/profile', icon: '◉' },
 ];
 
 const adminLinks = [
-  { label: "Dashboard", path: "/admin/dashboard", icon: "▦" },
-  { label: "Courses", path: "/admin/courses", icon: "▣" },
-  { label: "Students", path: "/admin/students", icon: "◉" },
-  { label: "Instructors", path: "/admin/instructors", icon: "♙" },
-  { label: "Categories", path: "/admin/categories", icon: "▤" },
-  { label: "Settings", path: "/admin/settings", icon: "⚙" },
+  { label: 'Dashboard', path: '/admin/dashboard', icon: '▦' },
+  { label: 'Courses', path: '/admin/courses', icon: '▣' },
+  { label: 'Students', path: '/admin/students', icon: '◉' },
+  { label: 'Instructors', path: '/admin/instructors', icon: '♙' },
+  { label: 'Categories', path: '/admin/categories', icon: '▤' },
+  { label: 'Settings', path: '/admin/settings', icon: '⚙' },
 ];
 
-function Sidebar({ role = "student", isOpen = false, onClose = () => {} }) {
+function Sidebar({ role = 'student', isOpen = false, onClose = () => {} }) {
   const navigate = useNavigate();
-  const links = role === "admin" ? adminLinks : studentLinks;
+  const links = role === 'admin' ? adminLinks : studentLinks;
 
   function handleLogout() {
-    localStorage.removeItem("user");
-    navigate("/login");
+    localStorage.removeItem('user');
+    navigate('/login');
   }
 
   return (
     <>
-      {isOpen && <button className="sidebar-overlay" onClick={onClose} aria-label="Close sidebar" />}
-
-      <aside className={`sidebar ${isOpen ? "sidebar-open" : ""}`}>
-        <div className="sidebar-header">
-          <NavLink to="/" className="logo" onClick={onClose}>
-            Learn<span>Hub</span>
-          </NavLink>
-          <button className="sidebar-close" onClick={onClose} aria-label="Close sidebar">×</button>
+      {isOpen && <button className="fixed inset-0 z-20 cursor-pointer bg-slate-950/40 lg:hidden" onClick={onClose} aria-label="Close sidebar" />}
+      <aside className={`fixed inset-y-0 left-0 z-30 flex w-64 -translate-x-full flex-col border-r border-slate-200 bg-white p-4 transition-transform lg:static lg:z-auto lg:translate-x-0 ${isOpen ? 'translate-x-0' : ''}`}>
+        <div className="flex items-center justify-between px-2 pb-8">
+          <NavLink to="/" className="text-2xl font-extrabold text-primary-500" onClick={onClose}>Learn<span className="text-slate-900">Hub</span></NavLink>
+          <button className="text-2xl text-slate-500 lg:hidden" onClick={onClose} aria-label="Close sidebar">×</button>
         </div>
-
-        <p className="sidebar-title">{role === "admin" ? "Admin Panel" : "Student Panel"}</p>
-
-        <nav className="sidebar-links" aria-label={`${role} navigation`}>
+        <p className="mb-3 px-2 text-xs font-bold uppercase tracking-wider text-slate-400">{role === 'admin' ? 'Admin Panel' : 'Student Panel'}</p>
+        <nav className="space-y-1" aria-label={`${role} navigation`}>
           {links.map((link) => (
-            <NavLink
-              key={link.path}
-              to={link.path}
-              onClick={onClose}
-              className={({ isActive }) => isActive ? "sidebar-link active" : "sidebar-link"}
-            >
-              <span className="sidebar-icon">{link.icon}</span>
-              {link.label}
+            <NavLink key={link.path} to={link.path} onClick={onClose} className={({ isActive }) => `flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition ${isActive ? 'bg-primary-50 text-primary-500' : 'text-slate-600 hover:bg-slate-50 hover:text-primary-500'}`}>
+              <span className="w-5 text-center">{link.icon}</span>{link.label}
             </NavLink>
           ))}
         </nav>
-
-        <button className="sidebar-link logout-link" onClick={handleLogout}>
-          <span className="sidebar-icon">↪</span>
-          Logout
+        <button className="mt-auto flex items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-medium text-slate-600 hover:bg-red-50 hover:text-red-600" onClick={handleLogout}>
+          <span className="w-5 text-center">↪</span>Logout
         </button>
       </aside>
     </>
