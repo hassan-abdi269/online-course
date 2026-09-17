@@ -1,19 +1,58 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
+import { API_URL } from '../lib/api';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+function getCachedUser() {
+  try {
+    const value = localStorage.getItem('user');
+    return value ? JSON.parse(value) : null;
+  } catch {
+    return null;
+  }
+}
 
 function ProtectedRoutes({ allowedRole }) {
-  const [state, setState] = useState({ loading: true, user: null });
+  const cachedUser = getCachedUser();
+  const [state, setState] = useState({ loading: !cachedUser, user: cachedUser });
+
   useEffect(() => {
+    let mounted = true;
+
     fetch(`${API_URL}/auth/me`, { credentials: 'include' })
-      .then((response) => response.ok ? response.json() : Promise.reject(new Error('Unauthenticated')))
-      .then(({ user }) => setState({ loading: false, user }))
-      .catch(() => setState({ loading: false, user: null }));
+      .then((response) => {
+        if (!response.ok) throw new Error('Unauthenticated');
+        return response.json();
+      })
+      .then(({ user }) => {
+        if (!mounted) return;
+        localStorage.setItem('user', JSON.stringify(user));
+        setState({ loading: false, user });
+      })
+      .catch(() => {
+        if (!mounted) return;
+        if (cachedUser) {
+          setState({ loading: false, user: cachedUser });
+        } else {
+          setState({ loading: false, user: null });
+        }
+      });
+
+    return () => {
+      mounted = false;
+    };
   }, []);
-  if (state.loading) return <main className="p-8 text-slate-500">Checking session...</main>;
+
+  if (state.loading) {
+    return <main className="flex min-h-screen items-center justify-center bg-slate-50 p-8 text-slate-500">Loading dashboard...</main>;
+  }
+
   if (!state.user) return <Navigate to="/login" replace />;
-  if (allowedRole && state.user.role !== allowedRole) return <Navigate to={state.user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard'} replace />;
+
+  if (allowedRole && state.user.role !== allowedRole) {
+    return <Navigate to={state.user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard'} replace />;
+  }
+
   return <Outlet />;
 }
+
 export default ProtectedRoutes;
