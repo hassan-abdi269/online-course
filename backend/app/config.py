@@ -17,3 +17,4 @@ class Config:
     SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "false").lower() == "true"
     SESSION_COOKIE_NAME = "learnhub_session"
     PERMANENT_SESSION_LIFETIME = 60 * 60 * 24 * 7
+    WTF_CSRF_ENABLED = False
