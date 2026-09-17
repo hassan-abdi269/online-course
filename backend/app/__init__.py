@@ -15,11 +15,9 @@ from .routes.admin import admin_bp
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
-
     db.init_app(app)
     migrate.init_app(app, db)
-    CORS(app, origins=app.config["FRONTEND_URL"])
-
+    CORS(app, origins=[app.config["FRONTEND_URL"]], supports_credentials=True)
     app.register_blueprint(health_bp, url_prefix="/api")
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
     app.register_blueprint(courses_bp, url_prefix="/api/courses")
@@ -27,5 +25,4 @@ def create_app(config_class=Config):
     app.register_blueprint(instructors_bp, url_prefix="/api/instructors")
     app.register_blueprint(enrollments_bp, url_prefix="/api/enrollments")
     app.register_blueprint(admin_bp, url_prefix="/api/admin")
-
     return app

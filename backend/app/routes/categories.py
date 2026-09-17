@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request
+from ..auth_utils import admin_required
 from ..extensions import db
 from ..models import Category
 
@@ -15,6 +16,7 @@ def list_categories():
 
 
 @categories_bp.post("")
+@admin_required
 def create_category():
     data = request.get_json(silent=True) or {}
     name = data.get("name", "").strip()
@@ -29,6 +31,7 @@ def create_category():
 
 
 @categories_bp.patch("/<int:category_id>")
+@admin_required
 def update_category(category_id):
     category = db.get_or_404(Category, category_id)
     data = request.get_json(silent=True) or {}
@@ -41,6 +44,7 @@ def update_category(category_id):
 
 
 @categories_bp.delete("/<int:category_id>")
+@admin_required
 def delete_category(category_id):
     category = db.get_or_404(Category, category_id)
     db.session.delete(category)
