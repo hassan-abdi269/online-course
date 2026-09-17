@@ -17,7 +17,18 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
     db.init_app(app)
     migrate.init_app(app, db)
-    CORS(app, origins=[app.config["FRONTEND_URL"]], supports_credentials=True)
+
+    allowed_origins = list({
+        app.config["FRONTEND_URL"].rstrip("/"),
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    })
+    CORS(
+        app,
+        resources={r"/api/*": {"origins": allowed_origins}},
+        supports_credentials=True,
+    )
+
     app.register_blueprint(health_bp, url_prefix="/api")
     app.register_blueprint(auth_bp, url_prefix="/api/auth")
     app.register_blueprint(courses_bp, url_prefix="/api/courses")
