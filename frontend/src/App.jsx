@@ -3,6 +3,11 @@ import ProtectedRoutes from './components/ProtectedRoutes';
 import AdminLayout from './layouts/AdminLayout';
 import PublicLayout from './layouts/PublicLayout';
 import StudentLayout from './layouts/StudentLayout';
+import CourseDetails from './pages/public/CourseDetails';
+import Courses from './pages/public/Courses';
+import Home from './pages/public/Home';
+import Login from './pages/public/Login';
+import Register from './pages/public/Register';
 
 function PlaceholderPage({ title, description }) {
   return (
@@ -12,9 +17,7 @@ function PlaceholderPage({ title, description }) {
         <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">{title}</h1>
         <p className="mt-5 max-w-2xl text-lg text-slate-600">{description}</p>
         <div className="mt-8">
-          <Link to="/courses" className="inline-flex items-center rounded-xl bg-primary-500 px-5 py-3 font-semibold text-white shadow hover:bg-primary-600">
-            Explore courses
-          </Link>
+          <Link to="/courses" className="inline-flex items-center rounded-xl bg-primary-500 px-5 py-3 font-semibold text-white shadow hover:bg-primary-600">Explore courses</Link>
         </div>
       </div>
     </section>
@@ -25,13 +28,14 @@ function App() {
   return (
     <Routes>
       <Route element={<PublicLayout />}>
-        <Route path="/" element={<PlaceholderPage title="Learn New Skills. Build Your Future." description="LearnHub is being built step by step with React, Tailwind CSS, Flask, and PostgreSQL." />} />
-        <Route path="/courses" element={<PlaceholderPage title="Courses" description="Course discovery and filtering will be added in the next development step." />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/courses" element={<Courses />} />
+        <Route path="/courses/:id" element={<CourseDetails />} />
         <Route path="/categories" element={<PlaceholderPage title="Categories" description="Explore course categories on LearnHub." />} />
         <Route path="/about" element={<PlaceholderPage title="About LearnHub" description="Learn more about our e-learning platform." />} />
         <Route path="/contact" element={<PlaceholderPage title="Contact" description="The contact page is being prepared." />} />
-        <Route path="/login" element={<PlaceholderPage title="Login" description="Authentication will be connected to the Flask API soon." />} />
-        <Route path="/register" element={<PlaceholderPage title="Register" description="Student registration will be added soon." />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Route>
 
       <Route element={<ProtectedRoutes allowedRole="student" />}>
