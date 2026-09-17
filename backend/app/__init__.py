@@ -9,6 +9,7 @@ from .routes.courses import courses_bp
 from .routes.categories import categories_bp
 from .routes.instructors import instructors_bp
 from .routes.enrollments import enrollments_bp
+from .routes.admin import admin_bp
 
 
 def create_app(config_class=Config):
@@ -25,5 +26,6 @@ def create_app(config_class=Config):
     app.register_blueprint(categories_bp, url_prefix="/api/categories")
     app.register_blueprint(instructors_bp, url_prefix="/api/instructors")
     app.register_blueprint(enrollments_bp, url_prefix="/api/enrollments")
+    app.register_blueprint(admin_bp, url_prefix="/api/admin")
 
     return app
