@@ -29,32 +29,37 @@ function Sidebar({ role = 'student', isOpen = false, onClose = () => {} }) {
   }
 
   return (
-    <aside className={`sidebar ${isOpen ? 'sidebar-open' : ''}`}>
-      <div className="sidebar-header">
-        <button type="button" className="sidebar-brand" onClick={() => navigate(role === 'admin' ? '/admin/dashboard' : '/student/dashboard')}>
-          LearnHub
+    <aside className={`flex w-64 shrink-0 flex-col border-r border-slate-800 bg-slate-900 text-slate-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
+      <div className="flex h-20 items-center justify-between border-b border-slate-800 px-6">
+        <button type="button" onClick={() => navigate(role === 'admin' ? '/admin/dashboard' : '/student/dashboard')} className="text-left text-xl font-bold tracking-tight text-white">
+          Learn<span className="text-primary-400">Hub</span>
         </button>
-        <button type="button" className="sidebar-close" onClick={onClose} aria-label="Close menu">×</button>
+        <button type="button" onClick={onClose} className="text-2xl text-slate-400 hover:text-white lg:hidden" aria-label="Close menu">×</button>
       </div>
 
-      <nav className="sidebar-nav" aria-label="Dashboard navigation">
+      <nav className="flex-1 space-y-1 px-3 py-6" aria-label="Dashboard navigation">
+        <p className="mb-3 px-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+          {role === 'admin' ? 'Administration' : 'Learning'}
+        </p>
         {links.map((link) => (
           <NavLink
             key={link.path}
             to={link.path}
             onClick={onClose}
-            className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
+            className={({ isActive }) => `flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-colors ${isActive ? 'bg-primary-500 text-white shadow-lg shadow-primary-500/20' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}
           >
-            <span className="sidebar-icon" aria-hidden="true">{link.icon}</span>
+            <span className="flex w-5 justify-center text-lg" aria-hidden="true">{link.icon}</span>
             <span>{link.label}</span>
           </NavLink>
         ))}
       </nav>
 
-      <button type="button" className="sidebar-logout" onClick={handleLogout}>
-        <span aria-hidden="true">↪</span>
-        <span>Log out</span>
-      </button>
+      <div className="border-t border-slate-800 p-3">
+        <button type="button" onClick={handleLogout} className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium text-slate-400 transition-colors hover:bg-red-500/10 hover:text-red-300">
+          <span className="flex w-5 justify-center text-lg" aria-hidden="true">↪</span>
+          <span>Log out</span>
+        </button>
+      </div>
     </aside>
   );
 }
