@@ -1,23 +1,18 @@
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useEffect, useState } from 'react-router-dom';
 
-function getSavedUser() {
-  const savedUser = localStorage.getItem('user');
-  if (!savedUser) return null;
-  try {
-    return JSON.parse(savedUser);
-  } catch {
-    localStorage.removeItem('user');
-    return null;
-  }
-}
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 function ProtectedRoutes({ allowedRole }) {
-  const user = getSavedUser();
-  if (!user) return <Navigate to="/login" replace />;
-  if (allowedRole && user.role !== allowedRole) {
-    return <Navigate to={user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard'} replace />;
-  }
+  const [state, setState] = useState({ loading: true, user: null });
+  useEffect(() => {
+    fetch(`${API_URL}/auth/me`, { credentials: 'include' })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error('Unauthenticated')))
+      .then(({ user }) => setState({ loading: false, user }))
+      .catch(() => setState({ loading: false, user: null }));
+  }, []);
+  if (state.loading) return <main className="p-8 text-slate-500">Checking session...</main>;
+  if (!state.user) return <Navigate to="/login" replace />;
+  if (allowedRole && state.user.role !== allowedRole) return <Navigate to={state.user.role === 'admin' ? '/admin/dashboard' : '/student/dashboard'} replace />;
   return <Outlet />;
 }
-
 export default ProtectedRoutes;
