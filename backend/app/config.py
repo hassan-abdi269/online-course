@@ -18,3 +18,8 @@ class Config:
     SESSION_COOKIE_NAME = "learnhub_session"
     PERMANENT_SESSION_LIFETIME = 60 * 60 * 24 * 7
     WTF_CSRF_ENABLED = False
+
+    # These values stay on the backend and are never exposed to the frontend.
+    ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "").strip().lower()
+    ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "")
+    ADMIN_NAME = os.getenv("ADMIN_NAME", "LearnHub Admin")
