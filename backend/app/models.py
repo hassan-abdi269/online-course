@@ -89,7 +89,11 @@ class Enrollment(db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey("courses.id"), nullable=False)
     progress = db.Column(db.Integer, nullable=False, default=0)
-    status = db.Column(db.String(30), nullable=False, default="in_progress")
+    status = db.Column(db.String(30), nullable=False, default="pending")
+    payment_method = db.Column(db.String(50), nullable=True)
+    reference_number = db.Column(db.String(100), nullable=True)
+    payment_evidence = db.Column(db.String(255), nullable=True)
+    approved_at = db.Column(db.DateTime, nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
