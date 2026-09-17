@@ -1,7 +1,62 @@
 import { NavLink, useNavigate } from 'react-router-dom';
+import { apiFetch } from '../lib/api';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-const studentLinks = [{ label: 'Dashboard', path: '/student/dashboard', icon: '▦' }, { label: 'My Courses', path: '/student/courses', icon: '▣' }, { label: 'Progress', path: '/student/progress', icon: '◔' }, { label: 'Certificates', path: '/student/certificates', icon: '▤' }, { label: 'Profile', path: '/student/profile', icon: '◉' }];
-const adminLinks = [{ label: 'Dashboard', path: '/admin/dashboard', icon: '▦' }, { label: 'Courses', path: '/admin/courses', icon: '▣' }, { label: 'Students', path: '/admin/students', icon: '◉' }, { label: 'Instructors', path: '/admin/instructors', icon: '♙' }, { label: 'Categories', path: '/admin/categories', icon: '▤' }, { label: 'Settings', path: '/admin/settings', icon: '⚙' }];
-function Sidebar({ role = 'student', isOpen = false, onClose = () => {} }) { const navigate = useNavigate(); const links = role === 'admin' ? adminLinks : studentLinks; async function handleLogout() { await fetch(`${API_URL}/auth/logout`, { method: 'POST', credentials: 'include' }); localStorage.removeItem('user'); navigate('/login'); } return <><>{isOpen && <button className="fixed inset-0 z-20 cursor-pointer bg-slate-950/40 lg:hidden" onClick={onClose} aria-label="Close sidebar" />}</><aside className={`fixed inset-y-0 left-0 z-30 flex w-64 -translate-x-full flex-col border-r border-slate-200 bg-white p-4 transition-transform lg:static lg:z-auto lg:translate-x-0 ${isOpen ? 'translate-x-0' : ''}`}><div className="flex items-center justify-between px-2 pb-8"><NavLink to="/" className="text-2xl font-extrabold text-primary-500" onClick={onClose}>Learn<span className="text-slate-900">Hub</span></NavLink><button className="text-2xl text-slate-500 lg:hidden" onClick={onClose}>×</button></div><p className="mb-3 px-2 text-xs font-bold uppercase tracking-wider text-slate-400">{role === 'admin' ? 'Admin Panel' : 'Student Panel'}</p><nav className="space-y-1">{links.map((link) => <NavLink key={link.path} to={link.path} onClick={onClose} className={({ isActive }) => `flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium ${isActive ? 'bg-primary-50 text-primary-600' : 'text-slate-600 hover:bg-slate-50'}`}><span className="w-5 text-center">{link.icon}</span>{link.label}</NavLink>)}</nav><button className="mt-auto flex items-center gap-3 rounded-xl px-3 py-3 text-left text-sm font-medium text-slate-600 hover:bg-red-50 hover:text-red-600" onClick={handleLogout}>↪ Logout</button></aside></>; }
+const studentLinks = [
+  { label: 'Dashboard', path: '/student/dashboard', icon: '▦' },
+  { label: 'My Courses', path: '/student/courses', icon: '▣' },
+  { label: 'Progress', path: '/student/progress', icon: '◔' },
+  { label: 'Certificates', path: '/student/certificates', icon: '◇' },
+  { label: 'Profile', path: '/student/profile', icon: '◎' },
+];
+
+const adminLinks = [
+  { label: 'Dashboard', path: '/admin/dashboard', icon: '▦' },
+  { label: 'Courses', path: '/admin/courses', icon: '▣' },
+  { label: 'Students', path: '/admin/students', icon: '♙' },
+  { label: 'Instructors', path: '/admin/instructors', icon: '♟' },
+  { label: 'Categories', path: '/admin/categories', icon: '◇' },
+  { label: 'Settings', path: '/admin/settings', icon: '⚙' },
+];
+
+function Sidebar({ role = 'student', isOpen = false, onClose = () => {} }) {
+  const navigate = useNavigate();
+  const links = role === 'admin' ? adminLinks : studentLinks;
+
+  async function handleLogout() {
+    await apiFetch('/auth/logout', { method: 'POST' });
+    localStorage.removeItem('user');
+    navigate('/login');
+  }
+
+  return (
+    <aside className={`sidebar ${isOpen ? 'sidebar-open' : ''}`}>
+      <div className="sidebar-header">
+        <button type="button" className="sidebar-brand" onClick={() => navigate(role === 'admin' ? '/admin/dashboard' : '/student/dashboard')}>
+          LearnHub
+        </button>
+        <button type="button" className="sidebar-close" onClick={onClose} aria-label="Close menu">×</button>
+      </div>
+
+      <nav className="sidebar-nav" aria-label="Dashboard navigation">
+        {links.map((link) => (
+          <NavLink
+            key={link.path}
+            to={link.path}
+            onClick={onClose}
+            className={({ isActive }) => `sidebar-link${isActive ? ' active' : ''}`}
+          >
+            <span className="sidebar-icon" aria-hidden="true">{link.icon}</span>
+            <span>{link.label}</span>
+          </NavLink>
+        ))}
+      </nav>
+
+      <button type="button" className="sidebar-logout" onClick={handleLogout}>
+        <span aria-hidden="true">↪</span>
+        <span>Log out</span>
+      </button>
+    </aside>
+  );
+}
+
 export default Sidebar;
