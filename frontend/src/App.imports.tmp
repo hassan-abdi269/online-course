@@ -1,0 +1,5 @@
+import Home from './pages/public/Home';
+import Courses from './pages/public/Courses';
+import CourseDetails from './pages/public/CourseDetails';
+import Login from './pages/public/Login';
+import Register from './pages/public/Register';
